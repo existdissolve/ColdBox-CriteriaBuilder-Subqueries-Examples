@@ -26,7 +26,7 @@ component extends="coldbox.system.orm.hibernate.VirtualEntityService" singleton{
 	public struct function getSimpleJoinTransform( required Numeric Age ) {
 		var c = newCriteria();
         c.createAlias( "InsuredDrivers", "id" )
-            .isLt( "id.Age", javaCast( "int", arguments.Age ) )
+            .isGt( "id.Age", javaCast( "int", arguments.Age ) )
             .resultTransformer( c.DISTINCT_ROOT_ENTITY );
         var results = {
             data = c.list( asquery=true ),
@@ -38,7 +38,7 @@ component extends="coldbox.system.orm.hibernate.VirtualEntityService" singleton{
 	// page4
 	public struct function getSimpleJoinSQLRestriction( required Numeric Age ) {
 		var c = newCriteria();
-        	c.sqlRestriction( "CarID in ( select CarID from Insured i join Driver d on i.DriverID=d.DriverID where d.Age < #arguments.Age# )" );
+        	c.sqlRestriction( "CarID in ( select CarID from Insured i join Driver d on i.DriverID=d.DriverID where d.Age > #arguments.Age# )" );
         var results = {
             data = c.list( asquery=true ),
             count = c.count()
@@ -54,8 +54,7 @@ component extends="coldbox.system.orm.hibernate.VirtualEntityService" singleton{
         		 .withProjections( property="CarID" )
         		 .createAlias( "InsuredDrivers", "id" )
         		 .isGT( "id.Age", javaCast( "int", arguments.Age) )
-        		 //.propertyIn( "CarID" )
-        		 .subIn( javaCast( "int", 12 ) )
+        		 .propertyIn( "CarID" )
         	);
         var results = {
             data = c.list( asquery=true ),
